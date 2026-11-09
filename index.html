@@ -225,6 +225,26 @@ fieldset.f{border:0;padding:0;margin:0}
 .stepper input:focus{box-shadow:none}
 .send{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center}
 .send .note{font-size:13px;color:var(--muted)}
+.dl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.dl{background:#fff;border:1px solid #e6dccb;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:10px}
+.dl h3{font-size:20px;font-weight:800}.dl p{color:var(--muted);font-size:15px;flex:1}
+.dl .meta{font:500 12.5px/1.4 var(--mono);color:var(--muted)}
+.dl .btn{justify-content:center}
+.dl-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:32px;padding:0;list-style:none;counter-reset:d}
+.dl-steps li{display:flex;gap:12px;font-size:15px;color:var(--muted)}
+.dl-steps li::before{counter-increment:d;content:counter(d);width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--ivory);font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dl-steps b{display:block;color:var(--ink)}
+.dl-note{margin-top:20px;font-size:14px;color:var(--muted)}
+@media(max-width:860px){.dl-grid{grid-template-columns:1fr}.dl-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.dl-steps{grid-template-columns:1fr}}
+.sent{margin-top:24px;border:1.5px solid #b7dcc6;border-radius:14px;padding:18px;background:#e9f5ee;color:#14532d}
+.sent[hidden]{display:none}
+.sent h3{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--green)}
+.sent h3 svg{width:18px;height:18px}
+.sent p{margin-top:6px}.sent .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.fields[hidden],.send[hidden]{display:none!important}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+select.sel{width:100%;font:inherit;padding:12px 14px;border:1.5px solid #dccdb4;border-radius:10px;background:#fdfbf7;color:var(--ink)}
 .result{margin-top:24px;border:1.5px dashed #d4c4a8;border-radius:14px;padding:18px;background:#fdfaf4}
 .result[hidden]{display:none}
 .result h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
@@ -321,6 +341,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
     <symbol id="i-wa" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6 8.5-6"/></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
     <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 8v8M11 8v8M14 8v8M17 8v8"/></symbol>
     <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10M5 7h14"/><path d="M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
@@ -360,6 +381,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
       <a href="#faq">FAQ</a>
+      <a href="#download">Download</a>
       <a class="btn btn-primary" href="#quote">Ask for a quote<span class="sr-only"> (form)</span></a>
     </nav>
   </div>
@@ -379,7 +401,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
       <ul class="hero-points">
         <li><svg><use href="#i-check"/></svg>GST ready</li>
         <li><svg><use href="#i-check"/></svg>Works offline</li>
-        <li><svg><use href="#i-check"/></svg>7-day free trial on request</li>
+        <li><svg><use href="#i-check"/></svg>Free trial — download and start billing</li>
       </ul>
     </div>
 
@@ -617,7 +639,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
       </details>
       <details>
         <summary>Can I try it before buying?<span class="pm" aria-hidden="true"></span></summary>
-        <div class="ans">Yes — a 7-day free trial is available on request. Send us a message through the quote form and we'll set it up for you.</div>
+        <div class="ans">Yes. Download TezBooks below, install it on your shop computer and start billing. When you're happy, ask for a quote and we send your licence key over the internet — your bills, items and customers stay.</div>
       </details>
       <details>
         <summary>What happens to my data? Is it backed up?<span class="pm" aria-hidden="true"></span></summary>
@@ -631,6 +653,28 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
   </div>
 </section>
 
+<section class="sec" id="download">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">Download</span>
+      <h2>Try TezBooks free</h2>
+      <p>Install it on your shop computer and start billing. When you're happy, ask for a quote — we send your licence key over the internet and your bills and items stay.</p>
+    </div>
+    <div class="dl-grid reveal">
+      <div class="dl"><h3>Windows 10 / 11</h3><p>Most shops. Setup asks whether this is the main computer or another counter.</p><span class="meta" data-dl-meta="win">TezBooks 1.5.0 Setup.exe · 8.2 MB</span><a class="btn btn-primary" href="download/TezBooks-Setup.exe" download="TezBooks 1.5.0 Setup.exe" data-dl="win"><svg><use href="#i-download"/></svg>Download free trial</a></div>
+      <div class="dl"><h3>Mac</h3><p>Apple Silicon (M1/M2/M3/M4) and Intel Macs.</p><span class="meta" data-dl-meta="mac">TezBooks-Mac.zip · 6.4 MB</span><a class="btn btn-outline" href="download/TezBooks-Mac.zip" download data-dl="mac"><svg><use href="#i-download"/></svg>Download free trial</a></div>
+      <div class="dl"><h3>Linux</h3><p>Ubuntu, Mint, Debian and similar.</p><span class="meta" data-dl-meta="linux">TezBooks-Linux.zip · 3.3 MB</span><a class="btn btn-outline" href="download/TezBooks-Linux.zip" download data-dl="linux"><svg><use href="#i-download"/></svg>Download free trial</a></div>
+    </div>
+    <ol class="dl-steps reveal">
+      <li><span><b>Download</b>The Setup for your computer.</span></li>
+      <li><span><b>Install</b>“Windows protected your PC”? Click More info → Run anyway.</span></li>
+      <li><span><b>Start billing</b>Shop name, your name and a PIN — your trial starts.</span></li>
+      <li><span><b>Get your licence</b>Ask for a quote below; the key comes over the internet.</span></li>
+    </ol>
+    <p class="dl-note">Version <span data-ver>1.5.0</span> · Phones and tablets need no download — they open TezBooks over your shop's Wi-Fi.</p>
+  </div>
+</section>
+
 <section class="sec quote" id="quote">
   <div class="wrap">
     <div class="quote-box reveal">
@@ -639,7 +683,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
         <h2>Tell us about your shop</h2>
         <p>Pricing depends on the number of computers and your setup. Share a few details and we'll reply with a quote on WhatsApp or email.</p>
         <ul>
-          <li><svg><use href="#i-check"/></svg>7-day free trial on request</li>
+          <li><svg><use href="#i-check"/></svg>Free trial — download and start billing</li>
           <li><svg><use href="#i-check"/></svg><span>Installation &amp; support by <span data-company>Elite Kaiiser</span></span></li>
           <li><svg><use href="#i-check"/></svg>For shops anywhere in India</li>
         </ul>
@@ -672,6 +716,11 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
             <input id="q-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" required>
             <span class="err" id="e-phone" aria-live="polite"></span>
           </div>
+          <div class="f full">
+            <label for="q-now">Billing software you use now <span class="opt">(optional)</span></label>
+            <select id="q-now" name="now" class="sel"><option value="">New to billing software</option><option>Vyapar</option><option>Marg</option><option>Busy</option><option>Tally</option><option>Excel / paper</option><option>Other</option></select>
+          </div>
+          <div class="hp" aria-hidden="true"><label for="q-web">Leave empty</label><input id="q-web" name="website" tabindex="-1" autocomplete="off"></div>
           <fieldset class="f full">
             <legend>Business type</legend>
             <div class="seg">
@@ -690,8 +739,13 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
           </div>
         </div>
         <div class="send">
-          <button class="btn btn-primary" type="submit" name="via" value="whatsapp"><svg><use href="#i-wa"/></svg>Get quote on WhatsApp</button>
-          <button class="btn btn-outline" type="submit" name="via" value="email"><svg><use href="#i-mail"/></svg>Get quote by email</button>
+          <button class="btn btn-primary" type="submit" name="via" value="cloud" id="qSend"><svg><use href="#i-arrow"/></svg>Send — get my quote</button>
+          <span class="inline-msg" id="sendErr" role="alert" style="color:#b42318"></span>
+        </div>
+        <div class="sent" id="sent" hidden tabindex="-1">
+          <h3><svg><use href="#i-check"/></svg><span>Sent to <span data-company>Elite Kaiiser</span></span></h3>
+          <p id="sentText">We'll call or WhatsApp you, usually the same day.</p>
+          <div class="acts"><a class="btn btn-primary" href="#download"><svg><use href="#i-download"/></svg>Download free trial</a></div>
         </div>
 
         <div class="result" id="result" hidden>
@@ -721,6 +775,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
         <a href="#faq">FAQ</a>
+        <a href="#download">Download</a>
         <a href="#quote">Ask for a quote</a>
       </nav>
     </div>
@@ -839,14 +894,17 @@ const CONFIG = {product:'TezBooks', company:'Elite Kaiiser', whatsapp:'', email:
     document.getElementById('q-' + id).addEventListener('input', function () { setErr(id, ''); });
   });
 
+  var CLOUD = {url: 'https://zneltnwixmrkjbevxwaw.supabase.co', key: 'sb_publishable_hZy5OM-vGb-rgH_eRVVB_Q_vlGaXy4w'};
+  var sentBox = document.getElementById('sent'), sendBtn = document.getElementById('qSend'), sendErr = document.getElementById('sendErr');
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var via = (e.submitter && e.submitter.value) || 'whatsapp';
+    sendErr.textContent = '';
     var v = {
       name: document.getElementById('q-name').value.trim(),
       shop: document.getElementById('q-shop').value.trim(),
       city: document.getElementById('q-city').value.trim(),
       phone: document.getElementById('q-phone').value.trim(),
+      now: document.getElementById('q-now').value,
       btype: (form.querySelector('input[name="btype"]:checked') || {}).value || 'Retail',
       counters: clampCounters()
     };
@@ -863,39 +921,26 @@ const CONFIG = {product:'TezBooks', company:'Elite Kaiiser', whatsapp:'', email:
     if (digits.length === 11 && digits.charAt(0) === '0') digits = digits.slice(1);
     check('phone', /^[6-9]\d{9}$/.test(digits), 'Please enter a valid 10-digit mobile number.');
     if (!ok) { document.getElementById('q-' + first).focus(); return; }
-
-    var msg =
-      'Hello ' + CONFIG.company + ',\n' +
-      'I would like a quote for ' + CONFIG.product + '.\n\n' +
-      'Name: ' + v.name + '\n' +
-      'Shop name: ' + v.shop + '\n' +
-      'City: ' + v.city + '\n' +
-      'Phone: ' + v.phone + '\n' +
-      'Business type: ' + v.btype + '\n' +
-      'Number of counters: ' + v.counters + '\n\n' +
-      'Thank you.';
-
-    out.value = msg;
-    result.hidden = false;
-
-    currentHref = via === 'email'
-      ? mailLink(CONFIG.product + ' quote — ' + v.shop + ', ' + v.city, msg)
-      : waLink(msg);
-    sendLabel.textContent = via === 'email' ? 'Open email' : 'Open WhatsApp';
-    sendIconUse.setAttribute('href', via === 'email' ? '#i-mail' : '#i-wa');
-
-    if (currentHref) {
-      sendLink.setAttribute('href', currentHref);
-      if (via === 'whatsapp') { sendLink.setAttribute('target', '_blank'); sendLink.setAttribute('rel', 'noopener'); }
-      else { sendLink.removeAttribute('target'); sendLink.removeAttribute('rel'); }
-      resultMsg.textContent = 'Tap "' + sendLabel.textContent + '" to send this message.';
-    } else {
-      sendLink.setAttribute('href', '#quote');
-      sendLink.removeAttribute('target');
-      resultMsg.textContent = COMING_SOON + ' — please copy this message for now.';
-    }
-    result.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+    if (document.getElementById('q-web').value) { showSent(digits); return; } // robots fill hidden fields
+    sendBtn.disabled = true; var label = sendBtn.lastChild.textContent; sendBtn.lastChild.textContent = 'Sending…';
+    fetch(CLOUD.url + '/rest/v1/rpc/kb_lead_submit', {method: 'POST', headers: {'Content-Type': 'application/json', apikey: CLOUD.key, Authorization: 'Bearer ' + CLOUD.key},
+      body: JSON.stringify({p_name: v.name, p_shop: v.shop, p_city: v.city, p_phone: digits, p_btype: v.btype, p_counters: v.counters, p_now: v.now || null, p_note: null})})
+      .then(function (r) {
+        if (r.ok) return showSent(digits);
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          var m = String(j.message || '');
+          throw new Error(/busy/.test(m) ? 'We already have your request — we will contact you soon.' : /bad_enquiry/.test(m) ? 'Please check the details and try again.' : 'Could not send right now. Please try again.');
+        });
+      })
+      .catch(function (err) { sendErr.textContent = err && err.message && !/fetch|network/i.test(err.message) ? err.message : 'No internet? Please try again in a moment.'; })
+      .then(function () { sendBtn.disabled = false; sendBtn.lastChild.textContent = label; });
   });
+  function showSent(digits) {
+    document.getElementById('sentText').textContent = "We'll call or WhatsApp you on " + digits.slice(0, 5) + ' ' + digits.slice(5) + ', usually the same day. Meanwhile you can download the free trial.';
+    sentBox.hidden = false; form.querySelector('.fields').hidden = true; form.querySelector('.send').hidden = true;
+    sentBox.focus({preventScroll: true});
+    sentBox.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center'});
+  }
 
   sendLink.addEventListener('click', function (e) {
     if (!currentHref) {
