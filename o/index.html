@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#141a2e">
+<title>Order online · TezBooks</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{--navy:#141a2e;--ivory:#F7F0E5;--card:#fffdf9;--ink:#1c2236;--muted:#6b7084;--line:#e8dfcf;--sf:#c2410c;--sf2:#e0631f;--sf-soft:#fbe3d3;--green:#1f7a4d;--red:#b42318;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--body);background:var(--ivory);color:var(--ink);font-size:16px;line-height:1.45;padding-bottom:96px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+header{background:var(--navy);color:#fff;padding:18px 0 16px}
+header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.01em}
+header .sub{color:#c9c4ba;font-size:14px;margin-top:2px}
+header .pill{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;font-weight:600;background:rgba(255,255,255,.08);border-radius:99px;padding:5px 11px}
+.dot{width:8px;height:8px;border-radius:50%;background:#4ade80}
+.dot.off{background:#f59e0b}
+.note{background:var(--sf-soft);color:#7c2d12;border-radius:12px;padding:12px 14px;margin:14px 0 0;font-size:14px}
+.note.red{background:#fde8e6;color:var(--red)}
+.tools{position:sticky;top:0;z-index:5;background:var(--ivory);padding:12px 0 8px}
+.search{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;outline:none}
+.search:focus{border-color:var(--sf)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font-size:14px;font-weight:600;white-space:nowrap}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.cat{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 2px 8px}
+.item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 12px 12px 14px;margin-bottom:8px}
+.item .nm{font-weight:700;line-height:1.3}
+.item .pr{font-family:var(--mono);font-weight:600;margin-top:3px}
+.item .pr s{color:var(--muted);font-weight:500;margin-left:6px;font-size:14px}
+.item .u{color:var(--muted);font-size:13px;font-family:var(--body);font-weight:500}
+.item.out{opacity:.55}
+.add{flex:none;min-width:84px;height:40px;border-radius:10px;border:1.5px solid var(--sf);background:#fff;color:var(--sf);font-weight:800}
+.qty{flex:none;display:flex;align-items:center;border-radius:10px;background:var(--sf);color:#fff;height:40px;overflow:hidden}
+.qty button{width:36px;height:40px;border:0;background:transparent;color:#fff;font-size:20px;font-weight:700}
+.qty span{min-width:30px;text-align:center;font-weight:800;font-family:var(--mono)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--ivory) 30%)}
+.bar button{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:688px;margin:0 auto;border:0;border-radius:14px;background:var(--sf);color:#fff;padding:15px 18px;font-weight:800;font-size:16px;box-shadow:0 10px 30px -10px rgba(194,65,12,.7)}
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(20,26,46,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:var(--ivory);width:100%;max-width:720px;max-height:94vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
+.sheet h2{margin:0 0 12px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
+.x{border:0;background:#fff;border-radius:50%;width:36px;height:36px;font-size:20px;line-height:1}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:5px 0}
+.row .mono{font-family:var(--mono);font-weight:600;white-space:nowrap}
+.tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:9px;font-weight:800;font-size:18px}
+label{display:block;font-size:14px;font-weight:700;margin:12px 0 5px}
+input[type=text],input[type=tel],textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;outline:none}
+input:focus,textarea:focus{border-color:var(--sf)}
+textarea{resize:vertical;min-height:72px}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font-weight:700}
+.seg button.on{border-color:var(--sf);background:var(--sf-soft);color:#7c2d12}
+.err{color:var(--red);font-size:14px;font-weight:600;margin-top:8px;min-height:1px}
+.big{display:block;width:100%;border:0;border-radius:14px;background:var(--sf);color:#fff;padding:15px;font-weight:800;font-size:17px;margin-top:16px}
+.big:disabled{opacity:.6}
+.ghost{display:block;width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px;font-weight:700;margin-top:10px;text-align:center;text-decoration:none;color:var(--ink)}
+.wa{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
+.done{text-align:center;padding:26px 6px 6px}
+.done .tick{width:64px;height:64px;border-radius:50%;background:#dcfce7;color:var(--green);display:grid;place-items:center;font-size:34px;margin:0 auto 10px}
+.done .no{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:.06em;margin:4px 0}
+.steps{display:flex;justify-content:space-between;margin:20px 0 6px;position:relative}
+.steps:before{content:"";position:absolute;left:10%;right:10%;top:13px;height:3px;background:var(--line)}
+.step{position:relative;flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+.step i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--line);margin:0 auto 5px;font-style:normal;font-size:13px}
+.step.on{color:var(--ink)}
+.step.on i{background:var(--sf);border-color:var(--sf);color:#fff}
+.mine{margin:18px 0 0;font-size:14px}
+.mine a{color:var(--sf);font-weight:700}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 10px}
+footer a{color:var(--muted)}
+.load{padding:60px 0;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="app"><div class="load">Loading the shop…</div></div>
+<script>
+(function () {
+  'use strict';
+  var CLOUD = {url: 'https://zneltnwixmrkjbevxwaw.supabase.co', key: 'sb_publishable_hZy5OM-vGb-rgH_eRVVB_Q_vlGaXy4w'};
+  var qs = new URLSearchParams(location.search);
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && qs.get('api')) CLOUD.url = qs.get('api'); // for testing only
+  var slug = (qs.get('s') || location.pathname.replace(/^\/o\/?/, '').split('/')[0] || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  if (slug && qs.get('s') && history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug + (qs.get('t') ? '?t=' + encodeURIComponent(qs.get('t')) : ''));
+  var app = document.getElementById('app');
+  var S = {shop: null, cart: {}, q: '', cat: '', how: 'delivery', pay: 'cash'};
+  var KEY_CART = 'tb.cart.' + slug, KEY_ME = 'tb.me', KEY_MINE = 'tb.orders.' + slug;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]; }); }
+  function rs(n) { n = Math.round(n * 100) / 100; return '₹' + n.toLocaleString('en-IN', {minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2}); }
+  function get(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function rpc(fn, args) {
+    return fetch(CLOUD.url + '/rest/v1/rpc/' + fn, {method: 'POST', headers: Object.assign({'Content-Type': 'application/json', apikey: CLOUD.key}, /^eyJ/.test(CLOUD.key) ? {Authorization: 'Bearer ' + CLOUD.key} : {}), body: JSON.stringify(args)})
+      .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { if (!r.ok) { var e = new Error((j && j.message) || ('HTTP ' + r.status)); e.status = r.status; throw e; } return j; }); });
+  }
+  function byId(id) { return S.shop.menu.find(function (m) { return m.i === id; }); }
+  function lines() { return Object.keys(S.cart).map(function (id) { var m = byId(id); return m && S.cart[id] > 0 && !m.x ? {m: m, q: S.cart[id]} : null; }).filter(Boolean); }
+  function sub() { return lines().reduce(function (a, l) { return a + l.q * l.m.p; }, 0); }
+  function fee() { var o = S.shop.opts; if (S.how !== 'delivery') return 0; var s = sub(); return o.freeAbove > 0 && s >= o.freeAbove ? 0 : (+o.fee || 0); }
+  function count() { return lines().reduce(function (a, l) { return a + l.q; }, 0); }
+  function saveCart() { put(KEY_CART, S.cart); }
+
+  function notFound(msg) { app.innerHTML = '<header><div class="wrap"><h1>TezBooks</h1></div></header><div class="wrap"><div class="empty">' + esc(msg) + '<br><br><a href="/" style="color:#c2410c;font-weight:700">tezbooks.com</a></div></div>'; }
+
+  if (!slug) { notFound('Open the link your shop sent you, like tezbooks.com/o/shop-name.'); return; }
+  if (!window.crypto || !crypto.subtle) { notFound('Please open this page in Chrome or another up-to-date browser.'); return; }
+
+  rpc('kb_order_menu', {p_slug: slug}).then(function (d) {
+    if (!d || !d.found) { notFound('We could not find this shop. Check the link.'); return; }
+    S.shop = d; S.shop.opts = d.opts || {}; S.shop.menu = d.menu || [];
+    document.title = (d.name || 'Shop') + ' · Order online';
+    var c = get(KEY_CART, {}); Object.keys(c).forEach(function (k) { if (byId(k)) S.cart[k] = c[k]; });
+    var o = S.shop.opts; S.how = o.delivery === false ? 'pickup' : 'delivery'; S.pay = o.cash === false ? 'upi' : 'cash';
+    var t = qs.get('t'); if (t && t.indexOf('-') > 0) { track(t.split('-')[0], t.split('-')[1]); return; }
+    draw();
+  }).catch(function () { notFound('Could not load the shop. Check your internet and try again.'); });
+
+  function draw() {
+    var d = S.shop, o = d.opts, cats = [];
+    d.menu.forEach(function (m) { if (m.c && cats.indexOf(m.c) < 0) cats.push(m.c); });
+    var mine = get(KEY_MINE, []).slice(-1)[0];
+    var html = '<header><div class="wrap"><h1>' + esc(d.name || 'Shop') + '</h1>' + (d.city ? '<div class="sub">' + esc(d.city) + '</div>' : '') +
+      '<div class="pill"><span class="dot' + (d.paused || !d.online ? ' off' : '') + '"></span>' + (d.paused ? 'Not taking orders right now' : d.online ? 'Taking orders' : 'Shop is offline — they will see your order when they open') + '</div></div></header>' +
+      '<div class="wrap">' + (d.paused ? '<div class="note red">This shop has paused online orders. Please try again later.</div>' : '') +
+      (o.note ? '<div class="note">' + esc(o.note) + '</div>' : '') +
+      (mine ? '<div class="mine">Your last order: <a href="?s=' + slug + '&t=' + mine.id + '-' + mine.code + '" id="lastOrder">#' + mine.id + ' — see status</a></div>' : '') +
+      '<div class="tools"><input class="search" id="q" type="search" placeholder="Search ' + d.menu.length + ' items" value="' + esc(S.q) + '" autocomplete="off">' +
+      (cats.length > 1 ? '<div class="chips"><button class="chip' + (!S.cat ? ' on' : '') + '" data-cat="">All</button>' + cats.map(function (c) { return '<button class="chip' + (S.cat === c ? ' on' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') + '</div>' : '') +
+      '</div><div id="list"></div><footer>Orders by <a href="/">TezBooks</a> · your details go only to this shop</footer></div>' +
+      '<div class="bar" id="bar" hidden><button id="cartBtn"><span id="barL"></span><span id="barR">View cart →</span></button></div>';
+    app.innerHTML = html;
+    document.getElementById('q').oninput = function (e) { S.q = e.target.value; drawList(); };
+    [].forEach.call(document.querySelectorAll('[data-cat]'), function (b) { b.onclick = function () { S.cat = b.dataset.cat; [].forEach.call(document.querySelectorAll('[data-cat]'), function (x) { x.classList.toggle('on', x === b); }); drawList(); }; });
+    document.getElementById('cartBtn').onclick = checkout;
+    var lo = document.getElementById('lastOrder'); if (lo) lo.onclick = function (e) { e.preventDefault(); track(mine.id, mine.code); };
+    drawList(); drawBar();
+  }
+
+  function itemHTML(m) {
+    var q = S.cart[m.i] || 0;
+    return '<div class="item' + (m.x ? ' out' : '') + '"><div style="flex:1;min-width:0"><div class="nm">' + esc(m.n) + '</div><div class="pr">' + rs(m.p) + (m.m ? '<s>' + rs(m.m) + '</s>' : '') + (m.u ? ' <span class="u">/ ' + esc(m.u) + '</span>' : '') + '</div></div>' +
+      (m.x ? '<span class="u">Out of stock</span>' : S.shop.paused ? '' : q > 0 ? '<div class="qty"><button data-dec="' + esc(m.i) + '" aria-label="Less">−</button><span>' + q + '</span><button data-inc="' + esc(m.i) + '" aria-label="More">+</button></div>' : '<button class="add" data-inc="' + esc(m.i) + '">Add</button>') + '</div>';
+  }
+
+  function drawList() {
+    var q = S.q.trim().toLowerCase(), list = S.shop.menu.filter(function (m) { return (!S.cat || m.c === S.cat) && (!q || m.n.toLowerCase().indexOf(q) >= 0); });
+    var box = document.getElementById('list'); if (!box) return;
+    if (!list.length) { box.innerHTML = '<div class="empty">' + (S.shop.menu.length ? 'No items match.' : 'This shop has not put any items online yet.') + '</div>'; return; }
+    var html = '', last = null;
+    list.slice(0, 400).forEach(function (m) { if (!S.cat && !q && (m.c || '') !== last) { last = m.c || ''; if (last) html += '<div class="cat">' + esc(last) + '</div>'; } html += itemHTML(m); });
+    if (list.length > 400) html += '<div class="empty">Search to see more items</div>';
+    box.innerHTML = html;
+    [].forEach.call(box.querySelectorAll('[data-inc]'), function (b) { b.onclick = function () { S.cart[b.dataset.inc] = (S.cart[b.dataset.inc] || 0) + 1; saveCart(); drawList(); drawBar(); }; });
+    [].forEach.call(box.querySelectorAll('[data-dec]'), function (b) { b.onclick = function () { var k = b.dataset.dec; S.cart[k] = (S.cart[k] || 0) - 1; if (S.cart[k] <= 0) delete S.cart[k]; saveCart(); drawList(); drawBar(); }; });
+  }
+
+  function drawBar() {
+    var n = count(), bar = document.getElementById('bar'); if (!bar) return;
+    bar.hidden = !n || S.shop.paused;
+    document.getElementById('barL').textContent = n + ' item' + (n > 1 ? 's' : '') + ' · ' + rs(sub());
+  }
+
+  function checkout() {
+    var o = S.shop.opts, me = get(KEY_ME, {});
+    var el = document.createElement('div'); el.className = 'sheet';
+    el.innerHTML = '<div><h2>Your order <button class="x" data-x aria-label="Close">×</button></h2><div class="box" id="cl"></div>' +
+      '<label>Your name</label><input type="text" id="fName" maxlength="60" autocomplete="name" value="' + esc(me.name || '') + '">' +
+      '<label>Mobile number</label><input type="tel" id="fPhone" maxlength="20" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile" value="' + esc(me.phone || '') + '">' +
+      (o.delivery !== false && o.pickup !== false ? '<label>How do you want it?</label><div class="seg" id="how"><button data-v="delivery">Home delivery</button><button data-v="pickup">I will pick it up</button></div>' : '') +
+      '<div id="addrBox"><label>Delivery address</label><textarea id="fAddr" maxlength="300" autocomplete="street-address" placeholder="House no., street, area, landmark">' + esc(me.address || '') + '</textarea></div>' +
+      '<label>Payment</label><div class="seg" id="pay">' + (o.cash !== false ? '<button data-v="cash">Cash on delivery</button>' : '') + (o.upi !== false ? '<button data-v="upi">UPI on delivery</button>' : '') + '</div>' +
+      '<label>Note for the shop <span style="font-weight:500;color:var(--muted)">(optional)</span></label><input type="text" id="fNote" maxlength="300" placeholder="e.g. call before coming">' +
+      '<div class="err" id="err"></div><button class="big" id="place">Place order</button>' +
+      '<div style="font-size:13px;color:var(--muted);text-align:center;margin-top:10px">Pay when you get your order. The shop confirms the final bill.</div></div>';
+    document.body.appendChild(el);
+    var close = function () { el.remove(); drawList(); drawBar(); };
+    el.querySelector('[data-x]').onclick = close;
+    el.onclick = function (e) { if (e.target === el) close(); };
+    function seg(id, key) { var s = el.querySelector('#' + id); if (!s) return; [].forEach.call(s.children, function (b) { b.classList.toggle('on', b.dataset.v === S[key]); b.onclick = function () { S[key] = b.dataset.v; seg(id, key); sums(); }; }); }
+    function sums() {
+      el.querySelector('#addrBox').hidden = S.how !== 'delivery';
+      var L = lines(), f = fee(), s = sub(), fa = +o.freeAbove || 0;
+      el.querySelector('#cl').innerHTML = L.map(function (l) { return '<div class="row"><span>' + esc(l.m.n) + ' <span style="color:var(--muted)">× ' + l.q + '</span></span><span class="mono">' + rs(l.q * l.m.p) + '</span></div>'; }).join('') +
+        '<div class="row" style="border-top:1px dashed var(--line);margin-top:6px;padding-top:9px"><span>Items</span><span class="mono">' + rs(s) + '</span></div>' +
+        (S.how === 'delivery' ? '<div class="row"><span>Delivery' + (f > 0 && fa > 0 ? ' <span style="color:var(--muted);font-size:13px">(free above ' + rs(fa) + ')</span>' : '') + '</span><span class="mono">' + (f > 0 ? rs(f) : 'Free') + '</span></div>' : '') +
+        '<div class="row tot"><span>To pay</span><span class="mono">' + rs(s + f) + '</span></div>' +
+        (o.minOrder > 0 && s < o.minOrder ? '<div class="err">Minimum order is ' + rs(o.minOrder) + '. Add ' + rs(o.minOrder - s) + ' more.</div>' : '');
+    }
+    seg('how', 'how'); seg('pay', 'pay'); sums();
+    el.querySelector('#place').onclick = function () {
+      var btn = this, err = el.querySelector('#err'); err.textContent = '';
+      var name = el.querySelector('#fName').value.trim(), phone = el.querySelector('#fPhone').value.replace(/\D/g, ''), addr = el.querySelector('#fAddr').value.trim(), note = el.querySelector('#fNote').value.trim();
+      if (phone.length === 12 && phone.indexOf('91') === 0) phone = phone.slice(2);
+      if (phone.length === 11 && phone[0] === '0') phone = phone.slice(1);
+      if (name.length < 2) { err.textContent = 'Please enter your name'; return; }
+      if (!/^[6-9]\d{9}$/.test(phone)) { err.textContent = 'Please enter a 10-digit mobile number'; return; }
+      if (S.how === 'delivery' && addr.length < 8) { err.textContent = 'Please enter your full address'; return; }
+      var L = lines(); if (!L.length) { err.textContent = 'Your cart is empty'; return; }
+      var total = Math.round((sub() + fee()) * 100) / 100;
+      if (o.minOrder > 0 && sub() < o.minOrder) { err.textContent = 'Minimum order is ' + rs(o.minOrder); return; }
+      put(KEY_ME, {name: name, phone: phone, address: addr});
+      var order = {name: name, phone: phone, address: S.how === 'delivery' ? addr : '', note: note, how: S.how, pay: S.pay, total: total, at: Date.now(),
+        lines: L.map(function (l) { return {id: l.m.i, name: l.m.n, qty: l.q, price: l.m.p}; })};
+      btn.disabled = true; btn.textContent = 'Sending…';
+      Promise.all([lock(order), sha('tb-phone|' + phone)]).then(function (r) {
+        return rpc('kb_order_place', {p_slug: slug, p_blob: r[0], p_phone_hash: r[1], p_total: total, p_items: L.length});
+      }).then(function (res) {
+        var mine = get(KEY_MINE, []); mine.push({id: res.id, code: res.code, at: Date.now()}); put(KEY_MINE, mine.slice(-10));
+        S.cart = {}; saveCart(); el.remove(); track(res.id, res.code, order);
+      }).catch(function (e) {
+        btn.disabled = false; btn.textContent = 'Place order';
+        var m = String(e.message || '');
+        err.textContent = m.indexOf('kb_paused') >= 0 ? 'The shop just paused online orders. Please try later.' : m.indexOf('kb_busy') >= 0 ? 'Too many orders right now. Please wait a few minutes and try again.' : m.indexOf('kb_bad_order') >= 0 ? 'Something in the order is not right. Check the items and try again.' : 'Could not send the order. Check your internet and try again.';
+      });
+    };
+  }
+
+  function enc(s) { return new TextEncoder().encode(s); }
+  function b64(u8) { var s = ''; for (var i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s); }
+  function sha(s) { return crypto.subtle.digest('SHA-256', enc(s)).then(function (h) { return Array.prototype.map.call(new Uint8Array(h), function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }); }
+  // lock the order so only this shop's TezBooks can read it
+  function lock(order) {
+    var pk = S.shop.pubkey, alg = {name: 'ECDH', namedCurve: 'P-256'}, eph, epub;
+    return crypto.subtle.importKey('jwk', {kty: 'EC', crv: 'P-256', x: pk.x, y: pk.y, ext: true}, alg, false, []).then(function (pub) {
+      return crypto.subtle.generateKey(alg, true, ['deriveBits']).then(function (k) { eph = k; return crypto.subtle.exportKey('raw', k.publicKey); }).then(function (raw) {
+        epub = new Uint8Array(raw); return crypto.subtle.deriveBits({name: 'ECDH', public: pub}, eph.privateKey, 256);
+      });
+    }).then(function (bits) { return crypto.subtle.importKey('raw', bits, 'HKDF', false, ['deriveKey']); })
+      .then(function (hk) { return crypto.subtle.deriveKey({name: 'HKDF', hash: 'SHA-256', salt: epub, info: enc('tezbooks-order-v1')}, hk, {name: 'AES-GCM', length: 256}, false, ['encrypt']); })
+      .then(function (key) { var iv = crypto.getRandomValues(new Uint8Array(12)); return crypto.subtle.encrypt({name: 'AES-GCM', iv: iv, additionalData: enc(slug)}, key, enc(JSON.stringify(order))).then(function (ct) { return JSON.stringify({e: b64(epub), iv: b64(iv), ct: b64(new Uint8Array(ct))}); }); });
+  }
+
+  var STEPS = [['new', 'Sent'], ['accepted', 'Accepted'], ['ready', 'Packed'], ['out', S.how === 'pickup' ? 'Ready' : 'On the way'], ['delivered', 'Delivered']];
+  var trackTimer = null;
+  function track(id, code, justPlaced) {
+    clearTimeout(trackTimer);
+    var o = S.shop.opts;
+    rpc('kb_order_track', {p_slug: slug, p_id: +id, p_code: code}).then(function (t) {
+      if (!t || !t.found) { notFound('Order not found.'); return; }
+      var idx = STEPS.map(function (s) { return s[0]; }).indexOf(t.status), cancelled = t.status === 'cancelled';
+      var waText = 'Hello, I placed order #' + id + ' (' + rs(+t.total) + ') on your TezBooks page.';
+      app.innerHTML = '<header><div class="wrap"><h1>' + esc(S.shop.name || 'Shop') + '</h1>' + (S.shop.city ? '<div class="sub">' + esc(S.shop.city) + '</div>' : '') + '</div></header><div class="wrap"><div class="done">' +
+        (cancelled ? '<div class="tick" style="background:#fde8e6;color:#b42318">×</div><h2 style="margin:0">Order cancelled</h2>' : '<div class="tick">✓</div><h2 style="margin:0">' + (justPlaced ? 'Order sent!' : t.status === 'delivered' ? 'Delivered' : 'Your order') + '</h2>') +
+        '<div class="no">#' + esc(id) + '</div><div style="color:var(--muted)">' + rs(+t.total) + ' · ' + new Date(t.created).toLocaleString('en-IN', {day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'}) + '</div>' +
+        (cancelled ? '' : '<div class="steps">' + STEPS.map(function (s, i) { return '<div class="step' + (i <= idx ? ' on' : '') + '"><i>' + (i < idx ? '✓' : i + 1) + '</i>' + s[1] + '</div>'; }).join('') + '</div>') +
+        (t.note ? '<div class="note" style="text-align:left">Message from the shop: ' + esc(t.note) + '</div>' : '') +
+        (t.status === 'new' ? '<div style="color:var(--muted);font-size:14px;margin-top:12px">The shop will accept your order soon. This page updates by itself.</div>' : '') + '</div>' +
+        (o.wa ? '<a class="ghost wa" target="_blank" rel="noopener" href="https://wa.me/91' + esc(String(o.wa).slice(-10)) + '?text=' + encodeURIComponent(waText) + '">Message the shop on WhatsApp</a>' : '') +
+        '<a class="ghost" href="?s=' + slug + '" id="more">Order more</a><footer>Keep this page to see your order status · <a href="/">TezBooks</a></footer></div>';
+      document.getElementById('more').onclick = function (e) { e.preventDefault(); clearTimeout(trackTimer); if (history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug); draw(); };
+      if (history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug + '?t=' + id + '-' + code);
+      if (['delivered', 'cancelled'].indexOf(t.status) < 0) trackTimer = setTimeout(function () { if (document.getElementById('more')) track(id, code, justPlaced); }, 15000);
+    }).catch(function () { trackTimer = setTimeout(function () { track(id, code, justPlaced); }, 20000); });
+  }
+})();
+</script>
+</body>
+</html>
