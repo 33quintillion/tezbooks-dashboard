@@ -339,11 +339,25 @@ function render() {
     ${du.count > du.top.length ? `<div class="small muted">and ${du.count - du.top.length} more</div>` : ''}` : '<div class="empty">Nobody owes you money.</div>'}
     ${d.payables && d.payables.total ? `<div class="small" style="margin-top:8px" id="payables">You owe ${d.payables.count} supplier${d.payables.count === 1 ? '' : 's'} <b class="num">${money0(d.payables.total)}</b></div>` : ''}</div>`;
 
+  const po = d.pos;
+  const poHtml = po && po.open ? `<div class="small" style="margin-top:8px" id="pos">${po.open} purchase order${po.open === 1 ? '' : 's'} waiting for goods · <b class="num">${money0(po.value)}</b>${po.late ? ` · <span class="tag bad">${po.late} late</span>` : ''}</div>` : '';
   // stock
   const st = d.stock || {list: []};
   const lowHtml = `<div class="card" id="low"><h2>Low stock<span class="r">${st.low ? `<span class="tag bad">${st.low}</span>` : ''}</span></h2>
     ${st.list.length ? `<div class="list">${st.list.map(p => `<div class="li"><div class="m"><b>${esc(p.name)}</b><small>alert at ${qty(p.min)} ${esc(p.unit || '')}</small></div><div class="a"><span class="tag ${p.stock <= 0 ? 'bad' : 'warn'}">${qty(p.stock)} ${esc(p.unit || '')}</span></div></div>`).join('')}</div>${st.low > st.list.length ? `<div class="small muted">and ${st.low - st.list.length} more</div>` : ''}` : '<div class="empty">All stock above alert levels.</div>'}
-    <div class="small muted" style="margin-top:8px">Stock value at cost <b class="num">${money0(st.value)}</b> · ${st.items} items${st.out ? ` · ${st.out} out of stock` : ''}</div></div>`;
+    <div class="small muted" style="margin-top:8px">Stock value at cost <b class="num">${money0(st.value)}</b> · ${st.items} items${st.out ? ` · ${st.out} out of stock` : ''}</div>${poHtml}</div>`;
+
+  // online orders
+  const od = d.orders;
+  const OST = {new: ['New', 'bad'], accepted: ['Accepted', 'warn'], ready: ['Packed', 'warn'], out: ['On the way', 'warn'], delivered: ['Delivered', 'ok'], cancelled: ['Cancelled', '']};
+  const ordersHtml = od && od.on ? `<div class="card" id="orders"><h2>Online orders<span class="r">${od.new ? `<span class="tag bad">${od.new} new</span>` : ''}</span></h2>
+    <div class="small muted">Today ${od.todayN} order${od.todayN === 1 ? '' : 's'} · <b class="num">${money0(od.today)}</b>${od.active ? ` · ${od.active} in progress` : ''}</div>
+    ${od.list && od.list.length ? `<div class="list" style="margin-top:6px">${od.list.map(o => `<div class="li"><div class="m"><b>#${esc(o.no)} ${esc(o.name || '')}</b><small>${when(o.at, tz, '')} · ${o.how === 'pickup' ? 'pickup' : 'delivery'}</small></div><div class="a"><span class="num">${money0(o.total)}</span> <span class="tag ${(OST[o.st] || [])[1] || ''}">${esc((OST[o.st] || [o.st])[0])}</span></div></div>`).join('')}</div>` : '<div class="empty">No orders yet.</div>'}</div>` : '';
+  // every place of the business
+  const pl = d.places || [];
+  const placesHtml = pl.length > 1 ? `<div class="card" id="places"><h2>All branches</h2><div class="list">${pl.map(x => `<div class="li"><div class="m"><b>${esc(x.name)}${x.here ? ' <span class="muted" style="font-weight:500">· this computer</span>' : ''}</b><small>${x.todayN} bill${x.todayN === 1 ? '' : 's'} today${!x.here && x.seen ? ' · online ' + ago(Date.parse(x.seen)) : ''}</small></div><div class="a" style="text-align:right"><span class="num">${money0(x.today)}</span><small class="muted" style="display:block">month ${money0(x.month)}</small></div></div>`).join('')}
+    <div class="li" style="font-weight:700"><div class="m">All places</div><div class="a" style="text-align:right"><span class="num">${money0(pl.reduce((a, x) => a + x.today, 0))}</span><small class="muted" style="display:block">month ${money0(pl.reduce((a, x) => a + x.month, 0))}</small></div></div></div>
+    <div class="small muted" style="margin-top:6px">Bills of other branches arrive here once they reach this computer.</div></div>` : '';
 
   // alerts
   const al = d.alerts || {list: [], unseen: 0};
@@ -359,7 +373,7 @@ function render() {
     <div class="stats">${stats}</div>
     <div class="card" id="pay"><h2>Payment modes</h2><div id="payBars">${payHtml}</div>${t.recvN ? `<div class="small muted">Plus ${t.recvN} due payment${t.recvN === 1 ? '' : 's'} received: ${money(t.recv)}</div>` : ''}</div>
     <div class="card"><h2>Last 14 days<span class="r">net sales</span></h2>${chart}</div>
-    ${cashHtml}${itemsHtml}${duesHtml}${lowHtml}${alertsHtml}${staffHtml}${billsHtml}
+    ${ordersHtml}${placesHtml}${cashHtml}${itemsHtml}${duesHtml}${lowHtml}${alertsHtml}${staffHtml}${billsHtml}
     <div class="foot">TezBooks · Elite Kaiiser<br>${d.app ? 'Shop program ' + esc(d.app) + ' · ' : ''}figures from ${when(d.at, tz, '')}<br><button id="rmShop">Remove this shop from this phone</button></div>`;
   main.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { S.period = b.dataset.p; LS.set('kbdash.period', S.period); render(); window.scrollTo({top: 0}); });
   $('#rmShop').onclick = removeShop;
