@@ -225,6 +225,31 @@ fieldset.f{border:0;padding:0;margin:0}
 .stepper input:focus{box-shadow:none}
 .send{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center}
 .send .note{font-size:13px;color:var(--muted)}
+/* Demo video + prices (2.0) */
+.vid{max-width:960px;margin:0 auto;border-radius:18px;overflow:hidden;border:1px solid #e0d3bd;box-shadow:0 30px 60px -30px rgba(20,26,46,.45);background:#1c2236}
+.vid video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#1c2236}
+.vid-note{text-align:center;color:var(--muted);font-size:14px;margin-top:14px}
+.plans{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:stretch}
+.plan{background:#fff;border:1px solid #e8dcc8;border-radius:var(--radius);padding:24px 20px;display:flex;flex-direction:column;gap:10px;position:relative}
+.plan.pop{border:2px solid var(--saffron);box-shadow:0 22px 44px -26px rgba(194,65,12,.55)}
+.plan .tag{position:absolute;top:-12px;left:20px;background:var(--saffron);color:#fff;font:800 11.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px}
+.plan h3{font-size:20px;font-weight:800}.plan .who{color:var(--muted);font-size:14px}
+.plan .price{font:800 32px/1 var(--body);color:var(--navy);margin-top:6px}.plan .price small{font:600 14px/1 var(--body);color:var(--muted)}
+.plan .life{font-size:13.5px;color:var(--muted)}
+.plan .lim{font-size:13.5px;font-weight:700;color:var(--ink);background:var(--ivory-2);border-radius:10px;padding:8px 10px}
+.plan ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:6px;flex:1;align-content:start}
+.plan li{display:flex;gap:8px;font-size:14px;color:#30364a;line-height:1.4}
+.plan li::before{content:"✓";color:var(--saffron);font-weight:800;flex:none}
+.plan .btn{justify-content:center;margin-top:8px}
+.trialbar{margin-top:18px;background:var(--navy);color:var(--ivory);border-radius:var(--radius);padding:18px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.trialbar b{color:#f3a26f}.trialbar>span{flex:1 1 360px}.trialbar .btn{margin-left:auto}
+.addons{margin-top:26px;display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+.addons .box{background:#fff;border:1px solid #e8dcc8;border-radius:var(--radius);padding:20px 22px}
+.addons h3{font-size:17px;font-weight:800;margin-bottom:10px}
+.addons table{width:100%;border-collapse:collapse;font-size:14.5px}.addons td{padding:7px 0;border-bottom:1px dashed #e6dccb}.addons td:last-child{text-align:right;font-weight:700;white-space:nowrap;padding-left:12px}
+.addons p{color:var(--muted);font-size:14.5px;margin-top:8px}
+@media(max-width:1020px){.plans{grid-template-columns:repeat(2,minmax(0,1fr))}.addons{grid-template-columns:1fr}}
+@media(max-width:560px){.plans{grid-template-columns:1fr}.trialbar .btn{margin-left:0}}
 .dl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .dl{background:#fff;border:1px solid #e6dccb;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:10px}
 .dl h3{font-size:20px;font-weight:800}.dl p{color:var(--muted);font-size:15px;flex:1}
@@ -380,9 +405,11 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
     <nav class="nav" aria-label="Main">
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
+      <a href="#demo">Demo</a>
+      <a href="#prices">Prices</a>
       <a href="#faq">FAQ</a>
       <a href="#download">Download</a>
-      <a class="btn btn-primary" href="#quote">Ask for a quote<span class="sr-only"> (form)</span></a>
+      <a class="btn btn-primary" href="#quote" data-want="demo">Book a free demo<span class="sr-only"> (form)</span></a>
     </nav>
   </div>
 </header>
@@ -395,8 +422,8 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
       <h1><span data-product>TezBooks</span> — retail &amp; <span class="accent">wholesale</span> in one counter</h1>
       <p class="lede">Fast GST bills, udhaar ledgers, stock and barcodes — on your own shop computer. Works without internet. Extra counters and phones join over your shop's Wi-Fi.</p>
       <div class="ctas">
-        <a class="btn btn-primary" href="#quote"><svg><use href="#i-wa"/></svg>Ask for a quote</a>
-        <a class="btn btn-ghost" href="#features">See features<svg><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-primary" href="#quote" data-want="demo"><svg><use href="#i-wa"/></svg>Book a free demo</a>
+        <a class="btn btn-ghost" href="#demo">Watch the 1-minute demo<svg><use href="#i-arrow"/></svg></a>
       </div>
       <ul class="hero-points">
         <li><svg><use href="#i-check"/></svg>GST ready</li>
@@ -613,6 +640,59 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
   </div>
 </section>
 
+<section class="sec" id="demo" style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center">
+      <span class="kicker">1-minute demo</span>
+      <h2>See a bill made, start to finish</h2>
+      <p>The real program with a sample shop — scan, split the payment, print, reports, touch mode and Gujarati.</p>
+    </div>
+    <div class="vid reveal"><video controls preload="none" playsinline poster="video/tezbooks-demo.jpg" aria-label="TezBooks demo: making a bill, split payment, reports, touch mode and Gujarati"><source src="video/tezbooks-demo.mp4" type="video/mp4">Your browser cannot play this video. <a href="video/tezbooks-demo.mp4">Download it</a>.</video></div>
+    <p class="vid-note">Want to see it with your own items? <a href="#quote" data-want="demo">Book a free demo</a> — on your computer or a video call.</p>
+  </div>
+</section>
+
+<section class="sec" id="prices">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">Prices</span>
+      <h2>Simple prices, per shop</h2>
+      <p>Pay yearly, or once for lifetime use. No charge per bill, per item or per customer. Start with a 30-day free trial with everything switched on.</p>
+    </div>
+    <div class="plans reveal">
+      <div class="plan"><h3>Starter</h3><span class="who">Small shop, one counter</span>
+        <div class="price">₹2,499<small> / year</small></div><div class="life">or ₹5,999 lifetime</div>
+        <div class="lim">1 counter · 2 staff logins</div>
+        <ul><li>GST and non-GST bills, returns</li><li>Thermal (58/80 mm) and A4 printing</li><li>Stock, barcode &amp; QR labels</li><li>Udhaar ledgers, WhatsApp bills &amp; reminders</li><li>Day-end cash, accounts, GSTR-1 &amp; 3B</li><li>Online backup, owner's phone app</li></ul>
+        <a class="btn btn-outline" href="#quote" data-want="Starter">Choose Starter</a></div>
+      <div class="plan pop"><span class="tag">Most shops</span><h3>Professional</h3><span class="who">Busy retail or small wholesale</span>
+        <div class="price">₹4,999<small> / year</small></div><div class="life">or ₹11,999 lifetime</div>
+        <div class="lim">2 counters · 5 staff logins</div>
+        <ul><li>Everything in Starter</li><li>Retail + wholesale prices</li><li>Suppliers, purchases, purchase orders</li><li>Quotations &amp; orders</li><li>Loyalty points, offers, coupons, schemes</li><li>Batch &amp; expiry, weighing-scale barcodes</li></ul>
+        <a class="btn btn-primary" href="#quote" data-want="Professional">Choose Professional</a></div>
+      <div class="plan"><h3>Business</h3><span class="who">Wholesale, several godowns, online orders</span>
+        <div class="price">₹8,999<small> / year</small></div><div class="life">or ₹21,999 lifetime</div>
+        <div class="lim">5 counters · 15 staff · 2 branches</div>
+        <ul><li>Everything in Professional</li><li>Delivery challans, e-invoice &amp; e-way bill files</li><li>Godowns &amp; stock transfers</li><li>Branches kept in step</li><li>Online order page for your customers</li><li>Salesman orders &amp; commission, alerts</li></ul>
+        <a class="btn btn-outline" href="#quote" data-want="Business">Choose Business</a></div>
+      <div class="plan"><h3>Enterprise</h3><span class="who">Chains and distributors</span>
+        <div class="price">₹16,999<small> / year</small></div><div class="life">or ₹39,999 lifetime</div>
+        <div class="lim">No limit on counters, staff or branches</div>
+        <ul><li>Everything in Business</li><li>As many counters and branches as you need</li><li>Priority support</li></ul>
+        <a class="btn btn-outline" href="#quote" data-want="Enterprise">Choose Enterprise</a></div>
+    </div>
+    <div class="trialbar reveal"><span><b>Free for 30 days.</b> Download, bill with your own items, and pay only when you're happy. Your data stays when you buy.</span><a class="btn btn-primary" href="#download"><svg><use href="#i-download"/></svg>Download free trial</a></div>
+    <div class="addons reveal">
+      <div class="box"><h3>Add-on packs (per year)</h3>
+        <table><tr><td>Extra counter</td><td>₹999</td></tr><tr><td>Extra branch (Business and up)</td><td>₹2,999</td></tr><tr><td>GST Pro — challans, e-invoice &amp; e-way bill files</td><td>₹1,499</td></tr><tr><td>Online orders page</td><td>₹1,499</td></tr><tr><td>Gujarati &amp; Hindi screens and bills</td><td>Free</td></tr></table></div>
+      <div class="box"><h3>How to pay</h3>
+        <p>UPI, bank transfer, or card / net-banking by a secure payment link. After payment your licence reaches your computer over the internet within minutes.</p>
+        <p>Lifetime includes one year of updates; after that, updates are ₹999 a year — or keep using your version as it is.</p>
+        <p>When a yearly licence ends you get 7 days to renew. After that you can still view, print and export everything — only new bills stop.</p></div>
+    </div>
+  </div>
+</section>
+
 <section class="sec" id="faq">
   <div class="wrap faq-wrap">
     <div class="sec-head reveal">
@@ -621,6 +701,14 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
       <p>Something else on your mind? <a href="#quote">Ask us</a> — we're happy to explain.</p>
     </div>
     <div class="faq reveal">
+      <details>
+        <summary>How much does it cost?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">From ₹2,499 a year per shop (Starter), or ₹5,999 once for lifetime use. See <a href="#prices">Prices</a> for all packages. The first 30 days are free with everything switched on.</div>
+      </details>
+      <details>
+        <summary>What happens if I don't renew?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">You get 7 extra days with a reminder on screen. After that your records stay safe on your computer and you can still view, print and export them — only new bills stop until you renew.</div>
+      </details>
       <details>
         <summary>Does it need internet?<span class="pm" aria-hidden="true"></span></summary>
         <div class="ans">No. Billing, stock and reports work fully offline on your shop computer. Extra counters and phones connect over your shop's own Wi-Fi network, not the internet. You only need internet for things like sending a bill or reminder on WhatsApp.</div>
@@ -658,7 +746,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
     <div class="sec-head reveal">
       <span class="kicker">Download</span>
       <h2>Try TezBooks free</h2>
-      <p>Install it on your shop computer and start billing. When you're happy, ask for a quote — we send your licence key over the internet and your bills and items stay.</p>
+      <p>Install it on your shop computer and start billing. When you're happy, pick a package — we send your licence key over the internet and your bills and items stay.</p>
     </div>
     <div class="dl-grid reveal">
       <div class="dl"><h3>Windows 10 / 11</h3><p>Most shops. Setup asks whether this is the main computer or another counter.</p><span class="meta" data-dl-meta="win">TezBooks 2.0.1 Setup.exe · 8.8 MB</span><a class="btn btn-primary" href="download/TezBooks-Setup.exe" download="TezBooks 2.0.1 Setup.exe" data-dl="win"><svg><use href="#i-download"/></svg>Download free trial</a></div>
@@ -669,7 +757,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
       <li><span><b>Download</b>The Setup for your computer.</span></li>
       <li><span><b>Install</b>“Windows protected your PC”? Click More info → Run anyway.</span></li>
       <li><span><b>Start billing</b>Shop name, your name and a PIN — your trial starts.</span></li>
-      <li><span><b>Get your licence</b>Ask for a quote below; the key comes over the internet.</span></li>
+      <li><span><b>Get your licence</b>Pick a package and pay; the key comes over the internet.</span></li>
     </ol>
     <p class="dl-note">Version <span data-ver>2.0.1</span> · Phones and tablets need no download — they open TezBooks over your shop's Wi-Fi.</p>
   </div>
@@ -679,9 +767,9 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
   <div class="wrap">
     <div class="quote-box reveal">
       <div class="quote-side">
-        <span class="kicker">Ask for a quote</span>
-        <h2>Tell us about your shop</h2>
-        <p>Pricing depends on the number of computers and your setup. Share a few details and we'll reply with a quote on WhatsApp or email.</p>
+        <span class="kicker">Free demo · Quote</span>
+        <h2>Book a free demo</h2>
+        <p>We'll show TezBooks with your kind of items — on your shop computer or a video call — and help you pick the right package. Share a few details and we'll call or WhatsApp you.</p>
         <ul>
           <li><svg><use href="#i-check"/></svg>Free trial — download and start billing</li>
           <li><svg><use href="#i-check"/></svg><span>Installation &amp; support by <span data-company>Elite Kaiiser</span></span></li>
@@ -720,6 +808,14 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
             <label for="q-now">Billing software you use now <span class="opt">(optional)</span></label>
             <select id="q-now" name="now" class="sel"><option value="">New to billing software</option><option>Vyapar</option><option>Marg</option><option>Busy</option><option>Tally</option><option>Excel / paper</option><option>Other</option></select>
           </div>
+          <div class="f full">
+            <label for="q-want">I'd like</label>
+            <select id="q-want" name="want" class="sel"><option value="demo">A free demo</option><option value="quote">A price for my shop</option><option value="Starter">To buy Starter</option><option value="Professional">To buy Professional</option><option value="Business">To buy Business</option><option value="Enterprise">To buy Enterprise</option><option value="help">Help with setup</option></select>
+          </div>
+          <div class="f full">
+            <label for="q-time">Best time to call <span class="opt">(optional)</span></label>
+            <select id="q-time" name="time" class="sel"><option value="">Any time</option><option>Morning (9–12)</option><option>Afternoon (12–4)</option><option>Evening (4–8)</option><option>After shop closes</option></select>
+          </div>
           <div class="hp" aria-hidden="true"><label for="q-web">Leave empty</label><input id="q-web" name="website" tabindex="-1" autocomplete="off"></div>
           <fieldset class="f full">
             <legend>Business type</legend>
@@ -739,7 +835,7 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
           </div>
         </div>
         <div class="send">
-          <button class="btn btn-primary" type="submit" name="via" value="cloud" id="qSend"><svg><use href="#i-arrow"/></svg>Send — get my quote</button>
+          <button class="btn btn-primary" type="submit" name="via" value="cloud" id="qSend"><svg><use href="#i-arrow"/></svg>Send — book my demo</button>
           <span class="inline-msg" id="sendErr" role="alert" style="color:#b42318"></span>
         </div>
         <div class="sent" id="sent" hidden tabindex="-1">
@@ -776,7 +872,10 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
         <a href="#how">How it works</a>
         <a href="#faq">FAQ</a>
         <a href="#download">Download</a>
-        <a href="#quote">Ask for a quote</a>
+        <a href="#prices">Prices</a>
+        <a href="#quote">Book a free demo</a>
+        <a class="legal" href="privacy/">Privacy</a>
+        <a class="legal" href="terms/">Terms</a>
       </nav>
     </div>
     <div class="legal">
@@ -894,6 +993,14 @@ const CONFIG = {product:'TezBooks', company:'Elite Kaiiser', whatsapp:'', email:
     document.getElementById('q-' + id).addEventListener('input', function () { setErr(id, ''); });
   });
 
+  var WANT = {demo: 'Wants a free demo', quote: 'Wants a price', Starter: 'Wants to buy Starter', Professional: 'Wants to buy Professional', Business: 'Wants to buy Business', Enterprise: 'Wants to buy Enterprise', help: 'Wants help with setup'};
+  function wantNote() {
+    var w = document.getElementById('q-want').value, t = document.getElementById('q-time').value;
+    return (WANT[w] || 'Wants a free demo') + (t ? ' · call ' + t.toLowerCase() : '');
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-want]'), function (a) {
+    a.addEventListener('click', function () { var sel = document.getElementById('q-want'); if (sel) sel.value = a.getAttribute('data-want'); });
+  });
   var CLOUD = {url: 'https://zneltnwixmrkjbevxwaw.supabase.co', key: 'sb_publishable_hZy5OM-vGb-rgH_eRVVB_Q_vlGaXy4w'};
   var sentBox = document.getElementById('sent'), sendBtn = document.getElementById('qSend'), sendErr = document.getElementById('sendErr');
   form.addEventListener('submit', function (e) {
@@ -924,7 +1031,7 @@ const CONFIG = {product:'TezBooks', company:'Elite Kaiiser', whatsapp:'', email:
     if (document.getElementById('q-web').value) { showSent(digits); return; } // robots fill hidden fields
     sendBtn.disabled = true; var label = sendBtn.lastChild.textContent; sendBtn.lastChild.textContent = 'Sending…';
     fetch(CLOUD.url + '/rest/v1/rpc/kb_lead_submit', {method: 'POST', headers: Object.assign({'Content-Type': 'application/json', apikey: CLOUD.key}, /^eyJ/.test(CLOUD.key) ? {Authorization: 'Bearer ' + CLOUD.key} : {}),
-      body: JSON.stringify({p_name: v.name, p_shop: v.shop, p_city: v.city, p_phone: digits, p_btype: v.btype, p_counters: v.counters, p_now: v.now || null, p_note: null})})
+      body: JSON.stringify({p_name: v.name, p_shop: v.shop, p_city: v.city, p_phone: digits, p_btype: v.btype, p_counters: v.counters, p_now: v.now || null, p_note: wantNote()})})
       .then(function (r) {
         if (r.ok) return showSent(digits);
         return r.json().catch(function () { return {}; }).then(function (j) {
