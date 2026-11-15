@@ -228,6 +228,9 @@ fieldset.f{border:0;padding:0;margin:0}
 /* Demo video + prices (2.0) */
 .vid{max-width:960px;margin:0 auto;border-radius:18px;overflow:hidden;border:1px solid #e0d3bd;box-shadow:0 30px 60px -30px rgba(20,26,46,.45);background:#1c2236}
 .vid video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#1c2236}
+.chaps{max-width:960px;margin:14px auto 0;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chaps button{border:1px solid #e0d3bd;background:#fff;border-radius:999px;padding:8px 14px;font:600 14px/1 var(--body);color:var(--ink);cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.chaps button span{font-family:var(--mono);color:var(--saffron);font-weight:600}.chaps button:hover{border-color:var(--saffron)}
 .vid-note{text-align:center;color:var(--muted);font-size:14px;margin-top:14px}
 .plans{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:stretch}
 .plan{background:#fff;border:1px solid #e8dcc8;border-radius:var(--radius);padding:24px 20px;display:flex;flex-direction:column;gap:10px;position:relative}
@@ -645,9 +648,12 @@ footer{background:#0f1424;color:#b8b3a8;padding:56px 0 34px;font-size:14.5px}
     <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center">
       <span class="kicker">1-minute demo</span>
       <h2>See a bill made, start to finish</h2>
-      <p>The real program with a sample shop — scan, split the payment, print, reports, touch mode and Gujarati.</p>
+      <p>The real program with a sample shop — scan, split the payment, print, reports, touch mode and Gujarati. The full walkthrough with voice is below.</p>
     </div>
     <div class="vid reveal"><video controls preload="none" playsinline poster="video/tezbooks-demo.jpg" aria-label="TezBooks demo: making a bill, split payment, reports, touch mode and Gujarati"><source src="video/tezbooks-demo.mp4" type="video/mp4">Your browser cannot play this video. <a href="video/tezbooks-demo.mp4">Download it</a>.</video></div>
+    <div class="sec-head reveal" style="margin:56px auto 18px;text-align:center"><h2 style="font-size:28px">Full walkthrough, with voice — 12 minutes</h2><p>Every part of TezBooks, chapter by chapter. Tap a chapter to jump to it.</p></div>
+    <div class="vid reveal"><video id="fullVid" controls preload="none" playsinline poster="video/tezbooks-full-demo.jpg" aria-label="TezBooks full walkthrough with narration"><source src="video/tezbooks-full-demo.mp4" type="video/mp4">Your browser cannot play this video. <a href="video/tezbooks-full-demo.mp4">Download it</a>.</video></div>
+    <div class="chaps reveal"><button type="button" data-t="0"><span>0:00</span>Welcome</button><button type="button" data-t="47.5"><span>0:47</span>Making a bill</button><button type="button" data-t="124.9"><span>2:04</span>Payments &amp; split</button><button type="button" data-t="188.1"><span>3:08</span>Returns &amp; exchange</button><button type="button" data-t="230.2"><span>3:50</span>Customers &amp; udhaar</button><button type="button" data-t="292.3"><span>4:52</span>Products</button><button type="button" data-t="335.7"><span>5:35</span>Stock &amp; labels</button><button type="button" data-t="387.4"><span>6:27</span>Suppliers &amp; purchases</button><button type="button" data-t="414.6"><span>6:54</span>Orders, challans &amp; offers</button><button type="button" data-t="447.5"><span>7:27</span>Cash &amp; day-end</button><button type="button" data-t="471.2"><span>7:51</span>Reports, GST &amp; accounts</button><button type="button" data-t="531.2"><span>8:51</span>Online orders</button><button type="button" data-t="558.4"><span>9:18</span>Settings, staff &amp; branches</button><button type="button" data-t="627.4"><span>10:27</span>Shortcuts, touch &amp; languages</button><button type="button" data-t="665.2"><span>11:05</span>Trial &amp; packages</button></div>
     <p class="vid-note">Want to see it with your own items? <a href="#quote" data-want="demo">Book a free demo</a> — on your computer or a video call.</p>
   </div>
 </section>
@@ -1000,6 +1006,9 @@ const CONFIG = {product:'TezBooks', company:'Elite Kaiiser', whatsapp:'', email:
   }
   Array.prototype.forEach.call(document.querySelectorAll('[data-want]'), function (a) {
     a.addEventListener('click', function () { var sel = document.getElementById('q-want'); if (sel) sel.value = a.getAttribute('data-want'); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.chaps [data-t]'), function (b) {
+    b.addEventListener('click', function () { var v = document.getElementById('fullVid'); v.preload = 'auto'; var go = function () { v.currentTime = Number(b.getAttribute('data-t')); v.play(); }; if (v.readyState >= 1) go(); else { v.addEventListener('loadedmetadata', go, {once: true}); v.load(); } v.scrollIntoView({behavior: 'smooth', block: 'center'}); });
   });
   var CLOUD = {url: 'https://zneltnwixmrkjbevxwaw.supabase.co', key: 'sb_publishable_hZy5OM-vGb-rgH_eRVVB_Q_vlGaXy4w'};
   var sentBox = document.getElementById('sent'), sendBtn = document.getElementById('qSend'), sendErr = document.getElementById('sendErr');
