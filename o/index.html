@@ -58,8 +58,8 @@ label{display:block;font-size:14px;font-weight:700;margin:12px 0 5px}
 input[type=text],input[type=tel],textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;outline:none}
 input:focus,textarea:focus{border-color:var(--sf)}
 textarea{resize:vertical;min-height:72px}
-.seg{display:flex;gap:8px}
-.seg button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font-weight:700}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{flex:1 1 40%;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font-weight:700}
 .seg button.on{border-color:var(--sf);background:var(--sf-soft);color:#7c2d12}
 .err{color:var(--red);font-size:14px;font-weight:600;margin-top:8px;min-height:1px}
 .big{display:block;width:100%;border:0;border-radius:14px;background:var(--sf);color:#fff;padding:15px;font-weight:800;font-size:17px;margin-top:16px}
@@ -80,6 +80,19 @@ textarea{resize:vertical;min-height:72px}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 10px}
 footer a{color:var(--muted)}
 .load{padding:60px 0;text-align:center;color:var(--muted)}
+select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;outline:none;appearance:auto}
+.locb{display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;margin-top:8px}
+.locok{display:inline-flex;align-items:center;gap:8px;margin-top:8px;font-size:14px;font-weight:700;color:var(--green)}
+.locok button{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:13px;padding:0}
+.paybox{background:#fff;border:2px solid var(--sf);border-radius:16px;padding:16px;margin:16px 0 4px;text-align:left}
+.paybox h3{margin:0 0 4px;font-size:19px}
+.paybox .amt{font-family:var(--mono);font-size:28px;font-weight:600;margin:2px 0 10px}
+.paybox .big{margin-top:8px;text-decoration:none;text-align:center}
+.paybox .upi{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--ivory);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:14px}
+.paybox .upi b{font-family:var(--mono);word-break:break-all}
+.paybox .upi button{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-weight:700;font-size:13px}
+.paid{background:#dcfce7;color:var(--green);border-radius:12px;padding:12px 14px;margin:14px 0 0;font-weight:700;text-align:left}
+.wait{background:#fef3c7;color:#92400e;border-radius:12px;padding:12px 14px;margin:14px 0 0;font-size:14px;text-align:left}
 </style>
 </head>
 <body>
@@ -93,7 +106,7 @@ footer a{color:var(--muted)}
   var slug = (qs.get('s') || location.pathname.replace(/^\/o\/?/, '').split('/')[0] || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
   if (slug && qs.get('s') && history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug + (qs.get('t') ? '?t=' + encodeURIComponent(qs.get('t')) : ''));
   var app = document.getElementById('app');
-  var S = {shop: null, cart: {}, q: '', cat: '', how: 'delivery', pay: 'cash'};
+  var S = {shop: null, cart: {}, q: '', cat: '', how: 'delivery', pay: 'cash', when: '', loc: '', payOpen: false};
   var KEY_CART = 'tb.cart.' + slug, KEY_ME = 'tb.me', KEY_MINE = 'tb.orders.' + slug;
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]; }); }
@@ -110,6 +123,37 @@ footer a{color:var(--muted)}
   function fee() { var o = S.shop.opts; if (S.how !== 'delivery') return 0; var s = sub(); return o.freeAbove > 0 && s >= o.freeAbove ? 0 : (+o.fee || 0); }
   function count() { return lines().reduce(function (a, l) { return a + l.q; }, 0); }
   function saveCart() { put(KEY_CART, S.cart); }
+  // ways to pay this shop offers
+  function payWays() {
+    var o = S.shop.opts, w = [], at = S.how === 'pickup' ? 'at the shop' : 'on delivery';
+    if (o.cash !== false) w.push(['cash', 'Cash ' + at]);
+    if (o.upi !== false) w.push(['upi', 'UPI ' + at]);
+    if (o.upiNow && o.upiId) w.push(['upinow', 'Pay now · UPI']);
+    if (o.payLink) w.push(['link', 'Pay now · card / net banking']);
+    if (!w.length) w.push(['cash', 'Cash ' + at]);
+    return w;
+  }
+  function payNow(p) { return p === 'upinow' || p === 'link'; }
+  // delivery times: "As soon as possible", then today's slots that are not over yet, then tomorrow's
+  function slotEnd(sl) {
+    var re = /(\d{1,2})(?:[:.](\d{2}))?\s*(am|pm)?/gi, m, last = null;
+    while ((m = re.exec(sl))) last = m;
+    if (!last) return null;
+    var h = +last[1], mi = +(last[2] || 0), ap = (last[3] || '').toLowerCase();
+    if (!ap && /pm/i.test(sl) && !/am/i.test(sl)) ap = 'pm';
+    if (ap === 'pm' && h < 12) h += 12; if (ap === 'am' && h === 12) h = 0;
+    if (h > 24 || mi > 59) return null;
+    return h * 60 + mi;
+  }
+  function whenChoices() {
+    var raw = String(S.shop.opts.slots || '').split(/[,;\n]+/).map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 8);
+    if (!raw.length) return [];
+    var now = new Date(), mins = now.getHours() * 60 + now.getMinutes(), out = [], tm = new Date(now.getTime() + 86400000);
+    var day = function (d) { return d.toLocaleDateString('en-IN', {day: 'numeric', month: 'short'}); };
+    raw.forEach(function (sl) { var e = slotEnd(sl); if (e == null || e - 30 > mins) out.push('Today (' + day(now) + ') · ' + sl); });
+    raw.forEach(function (sl) { out.push('Tomorrow (' + day(tm) + ') · ' + sl); });
+    return out;
+  }
 
   function notFound(msg) { app.innerHTML = '<header><div class="wrap"><h1>TezBooks</h1></div></header><div class="wrap"><div class="empty">' + esc(msg) + '<br><br><a href="/" style="color:#c2410c;font-weight:700">tezbooks.com</a></div></div>'; }
 
@@ -121,7 +165,7 @@ footer a{color:var(--muted)}
     S.shop = d; S.shop.opts = d.opts || {}; S.shop.menu = d.menu || [];
     document.title = (d.name || 'Shop') + ' · Order online';
     var c = get(KEY_CART, {}); Object.keys(c).forEach(function (k) { if (byId(k)) S.cart[k] = c[k]; });
-    var o = S.shop.opts; S.how = o.delivery === false ? 'pickup' : 'delivery'; S.pay = o.cash === false ? 'upi' : 'cash';
+    var o = S.shop.opts; S.how = o.delivery === false ? 'pickup' : 'delivery'; S.pay = payWays()[0][0];
     var t = qs.get('t'); if (t && t.indexOf('-') > 0) { track(t.split('-')[0], t.split('-')[1]); return; }
     draw();
   }).catch(function () { notFound('Could not load the shop. Check your internet and try again.'); });
@@ -178,18 +222,37 @@ footer a{color:var(--muted)}
       '<label>Your name</label><input type="text" id="fName" maxlength="60" autocomplete="name" value="' + esc(me.name || '') + '">' +
       '<label>Mobile number</label><input type="tel" id="fPhone" maxlength="20" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile" value="' + esc(me.phone || '') + '">' +
       (o.delivery !== false && o.pickup !== false ? '<label>How do you want it?</label><div class="seg" id="how"><button data-v="delivery">Home delivery</button><button data-v="pickup">I will pick it up</button></div>' : '') +
-      '<div id="addrBox"><label>Delivery address</label><textarea id="fAddr" maxlength="300" autocomplete="street-address" placeholder="House no., street, area, landmark">' + esc(me.address || '') + '</textarea></div>' +
-      '<label>Payment</label><div class="seg" id="pay">' + (o.cash !== false ? '<button data-v="cash">Cash on delivery</button>' : '') + (o.upi !== false ? '<button data-v="upi">UPI on delivery</button>' : '') + '</div>' +
+      '<div id="addrBox"><label>Delivery address</label><textarea id="fAddr" maxlength="300" autocomplete="street-address" placeholder="House no., street, area, landmark">' + esc(me.address || '') + '</textarea>' +
+      (o.v >= 2 && navigator.geolocation ? '<div id="locBox"></div>' : '') + '</div>' +
+      (whenChoices().length ? '<label id="whenL">When do you want it?</label><select id="fWhen"><option value="">As soon as possible</option>' + whenChoices().map(function (w) { return '<option' + (w === S.when ? ' selected' : '') + '>' + esc(w) + '</option>'; }).join('') + '</select>' : '') +
+      '<label>Payment</label><div class="seg" id="pay"></div>' +
       '<label>Note for the shop <span style="font-weight:500;color:var(--muted)">(optional)</span></label><input type="text" id="fNote" maxlength="300" placeholder="e.g. call before coming">' +
       '<div class="err" id="err"></div><button class="big" id="place">Place order</button>' +
-      '<div style="font-size:13px;color:var(--muted);text-align:center;margin-top:10px">Pay when you get your order. The shop confirms the final bill.</div></div>';
+      '<div style="font-size:13px;color:var(--muted);text-align:center;margin-top:10px" id="payNote"></div></div>';
     document.body.appendChild(el);
     var close = function () { el.remove(); drawList(); drawBar(); };
     el.querySelector('[data-x]').onclick = close;
     el.onclick = function (e) { if (e.target === el) close(); };
-    function seg(id, key) { var s = el.querySelector('#' + id); if (!s) return; [].forEach.call(s.children, function (b) { b.classList.toggle('on', b.dataset.v === S[key]); b.onclick = function () { S[key] = b.dataset.v; seg(id, key); sums(); }; }); }
+    function seg(id, key) { var s = el.querySelector('#' + id); if (!s) return; [].forEach.call(s.children, function (b) { b.classList.toggle('on', b.dataset.v === S[key]); b.onclick = function () { S[key] = b.dataset.v; if (key === 'how') drawPay(); seg(id, key); sums(); }; }); }
+    function drawPay() {
+      var w = payWays(); if (!w.some(function (x) { return x[0] === S.pay; })) S.pay = w[0][0];
+      el.querySelector('#pay').innerHTML = w.map(function (x) { return '<button data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('');
+      seg('pay', 'pay');
+    }
+    function drawLoc() {
+      var b = el.querySelector('#locBox'); if (!b) return;
+      b.innerHTML = S.loc ? '<div class="locok">📍 Your location is added <button id="locX">Remove</button></div>' : '<button class="locb" id="locGo">📍 Add my location on the map</button><span class="err" id="locErr" style="display:block"></span>';
+      if (S.loc) { b.querySelector('#locX').onclick = function () { S.loc = ''; drawLoc(); }; return; }
+      b.querySelector('#locGo').onclick = function () {
+        var btn = this; btn.disabled = true; btn.textContent = 'Finding you…';
+        navigator.geolocation.getCurrentPosition(function (p) { S.loc = p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6); drawLoc(); },
+          function () { drawLoc(); var e = el.querySelector('#locErr'); if (e) e.textContent = 'Could not get your location. Please type the full address.'; }, {enableHighAccuracy: true, timeout: 15000, maximumAge: 60000});
+      };
+    }
     function sums() {
       el.querySelector('#addrBox').hidden = S.how !== 'delivery';
+      var wl = el.querySelector('#whenL'); if (wl) wl.textContent = S.how === 'pickup' ? 'When will you pick it up?' : 'When do you want it?';
+      el.querySelector('#payNote').textContent = payNow(S.pay) ? 'After you place the order, you pay ' + rs(sub() + fee()) + ' on the next screen. The shop confirms the final bill.' : 'Pay when you get your order. The shop confirms the final bill.';
       var L = lines(), f = fee(), s = sub(), fa = +o.freeAbove || 0;
       el.querySelector('#cl').innerHTML = L.map(function (l) { return '<div class="row"><span>' + esc(l.m.n) + ' <span style="color:var(--muted)">× ' + l.q + '</span></span><span class="mono">' + rs(l.q * l.m.p) + '</span></div>'; }).join('') +
         '<div class="row" style="border-top:1px dashed var(--line);margin-top:6px;padding-top:9px"><span>Items</span><span class="mono">' + rs(s) + '</span></div>' +
@@ -197,7 +260,8 @@ footer a{color:var(--muted)}
         '<div class="row tot"><span>To pay</span><span class="mono">' + rs(s + f) + '</span></div>' +
         (o.minOrder > 0 && s < o.minOrder ? '<div class="err">Minimum order is ' + rs(o.minOrder) + '. Add ' + rs(o.minOrder - s) + ' more.</div>' : '');
     }
-    seg('how', 'how'); seg('pay', 'pay'); sums();
+    seg('how', 'how'); drawPay(); drawLoc(); sums();
+    if (el.querySelector('#fWhen')) el.querySelector('#fWhen').onchange = function (e) { S.when = e.target.value; };
     el.querySelector('#place').onclick = function () {
       var btn = this, err = el.querySelector('#err'); err.textContent = '';
       var name = el.querySelector('#fName').value.trim(), phone = el.querySelector('#fPhone').value.replace(/\D/g, ''), addr = el.querySelector('#fAddr').value.trim(), note = el.querySelector('#fNote').value.trim();
@@ -210,13 +274,18 @@ footer a{color:var(--muted)}
       var total = Math.round((sub() + fee()) * 100) / 100;
       if (o.minOrder > 0 && sub() < o.minOrder) { err.textContent = 'Minimum order is ' + rs(o.minOrder); return; }
       put(KEY_ME, {name: name, phone: phone, address: addr});
-      var order = {name: name, phone: phone, address: S.how === 'delivery' ? addr : '', note: note, how: S.how, pay: S.pay, total: total, at: Date.now(),
+      var when = el.querySelector('#fWhen') ? el.querySelector('#fWhen').value : '';
+      var order = {name: name, phone: phone, address: S.how === 'delivery' ? addr : '', note: note, how: S.how, pay: S.pay, total: total, at: Date.now(), when: when, loc: S.how === 'delivery' ? S.loc : '',
         lines: L.map(function (l) { return {id: l.m.i, name: l.m.n, qty: l.q, price: l.m.p}; })};
       btn.disabled = true; btn.textContent = 'Sending…';
       Promise.all([lock(order), sha('tb-phone|' + phone)]).then(function (r) {
-        return rpc('kb_order_place', {p_slug: slug, p_blob: r[0], p_phone_hash: r[1], p_total: total, p_items: L.length});
+        var args = {p_slug: slug, p_blob: r[0], p_phone_hash: r[1], p_total: total, p_items: L.length, p_pay: S.pay};
+        return rpc('kb_order_place', args).catch(function (e) { // cloud not updated yet: send it the old way
+          if (e.status !== 404 && String(e.message).indexOf('kb_order_place') < 0) throw e;
+          delete args.p_pay; return rpc('kb_order_place', args);
+        });
       }).then(function (res) {
-        var mine = get(KEY_MINE, []); mine.push({id: res.id, code: res.code, at: Date.now()}); put(KEY_MINE, mine.slice(-10));
+        var mine = get(KEY_MINE, []); mine.push({id: res.id, code: res.code, at: Date.now(), pay: S.pay}); put(KEY_MINE, mine.slice(-10));
         S.cart = {}; saveCart(); el.remove(); track(res.id, res.code, order);
       }).catch(function (e) {
         btn.disabled = false; btn.textContent = 'Place order';
@@ -249,18 +318,46 @@ footer a{color:var(--muted)}
     rpc('kb_order_track', {p_slug: slug, p_id: +id, p_code: code}).then(function (t) {
       if (!t || !t.found) { notFound('Order not found.'); return; }
       var idx = STEPS.map(function (s) { return s[0]; }).indexOf(t.status), cancelled = t.status === 'cancelled';
+      if (S.payOpen && document.getElementById('more')) { trackTimer = setTimeout(function () { track(id, code, justPlaced); }, 15000); return; }
       var waText = 'Hello, I placed order #' + id + ' (' + rs(+t.total) + ') on your TezBooks page.';
+      var pay = t.pay || ((get(KEY_MINE, []).filter(function (m) { return String(m.id) === String(id); })[0] || {}).pay) || 'cash', payHTML = '';
+      if (payNow(pay) && !cancelled) {
+        if (t.paid) payHTML = '<div class="paid">✓ Payment received by the shop</div>';
+        else if (t.claimed) payHTML = '<div class="wait">Thank you — you told the shop you have paid. They will check and confirm it here.</div>';
+        else {
+          var amt = (+t.total).toFixed(2), upi = pay === 'upinow' && o.upiId ? 'upi://pay?pa=' + encodeURIComponent(o.upiId) + '&pn=' + encodeURIComponent(S.shop.name || '') + '&am=' + amt + '&cu=INR&tn=' + encodeURIComponent('Order #' + id) : '';
+          payHTML = '<div class="paybox" id="payBox"><h3>' + (justPlaced ? 'Now pay for your order' : 'Payment pending') + '</h3><div class="amt">' + rs(+t.total) + '</div>' +
+            (upi ? '<a class="big" id="payUpi" href="' + esc(upi) + '">Pay ' + rs(+t.total) + ' by UPI</a><div style="font-size:13px;color:var(--muted);text-align:center;margin-top:6px">Opens GPay, PhonePe, Paytm or any UPI app</div>' +
+              '<div class="upi"><span>UPI ID <b>' + esc(o.upiId) + '</b></span><button id="copyUpi">Copy</button></div>'
+              : pay === 'link' && o.payLink ? '<a class="big" id="payLink" target="_blank" rel="noopener" href="' + esc(o.payLink) + '">Pay ' + rs(+t.total) + ' online</a><div style="font-size:13px;color:var(--muted);text-align:center;margin-top:6px">Enter ' + rs(+t.total) + ' on the payment page and write <b>Order #' + esc(id) + '</b> in the note</div>'
+              : '<div style="font-size:14px">The shop will tell you how to pay. You can also pay when you get the order.</div>') +
+            '<button class="ghost" id="paidBtn">I have paid</button><div id="paidForm" hidden><label>UPI reference / transaction number <span style="font-weight:500;color:var(--muted)">(optional — helps the shop find it)</span></label>' +
+            '<input type="text" id="payRef" maxlength="30" inputmode="text" autocomplete="off" placeholder="e.g. 431245678912"><div class="err" id="payErr"></div><button class="big" id="paidSend">Tell the shop I have paid</button></div></div>';
+        }
+      }
       app.innerHTML = '<header><div class="wrap"><h1>' + esc(S.shop.name || 'Shop') + '</h1>' + (S.shop.city ? '<div class="sub">' + esc(S.shop.city) + '</div>' : '') + '</div></header><div class="wrap"><div class="done">' +
         (cancelled ? '<div class="tick" style="background:#fde8e6;color:#b42318">×</div><h2 style="margin:0">Order cancelled</h2>' : '<div class="tick">✓</div><h2 style="margin:0">' + (justPlaced ? 'Order sent!' : t.status === 'delivered' ? 'Delivered' : 'Your order') + '</h2>') +
         '<div class="no">#' + esc(id) + '</div><div style="color:var(--muted)">' + rs(+t.total) + ' · ' + new Date(t.created).toLocaleString('en-IN', {day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'}) + '</div>' +
         (cancelled ? '' : '<div class="steps">' + STEPS.map(function (s, i) { return '<div class="step' + (i <= idx ? ' on' : '') + '"><i>' + (i < idx ? '✓' : i + 1) + '</i>' + s[1] + '</div>'; }).join('') + '</div>') +
-        (t.note ? '<div class="note" style="text-align:left">Message from the shop: ' + esc(t.note) + '</div>' : '') +
+        payHTML + (t.note ? '<div class="note" style="text-align:left">Message from the shop: ' + esc(t.note) + '</div>' : '') +
         (t.status === 'new' ? '<div style="color:var(--muted);font-size:14px;margin-top:12px">The shop will accept your order soon. This page updates by itself.</div>' : '') + '</div>' +
         (o.wa ? '<a class="ghost wa" target="_blank" rel="noopener" href="https://wa.me/91' + esc(String(o.wa).slice(-10)) + '?text=' + encodeURIComponent(waText) + '">Message the shop on WhatsApp</a>' : '') +
         '<a class="ghost" href="?s=' + slug + '" id="more">Order more</a><footer>Keep this page to see your order status · <a href="/">TezBooks</a></footer></div>';
-      document.getElementById('more').onclick = function (e) { e.preventDefault(); clearTimeout(trackTimer); if (history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug); draw(); };
+      var cu = document.getElementById('copyUpi');
+      if (cu) cu.onclick = function () { var done = function () { cu.textContent = 'Copied'; }; if (navigator.clipboard) navigator.clipboard.writeText(o.upiId).then(done, done); else done(); };
+      var pb = document.getElementById('paidBtn');
+      if (pb) pb.onclick = function () { S.payOpen = true; pb.hidden = true; document.getElementById('paidForm').hidden = false; document.getElementById('payRef').focus(); };
+      var ps = document.getElementById('paidSend');
+      if (ps) ps.onclick = function () {
+        var ref = document.getElementById('payRef').value.replace(/[^A-Za-z0-9]/g, '').slice(0, 30), er = document.getElementById('payErr');
+        ps.disabled = true; ps.textContent = 'Sending…'; er.textContent = '';
+        lock({ref: ref, at: Date.now()}).then(function (blob) { return rpc('kb_order_paid', {p_slug: slug, p_id: +id, p_code: code, p_blob: blob}); }).then(function () {
+          S.payOpen = false; track(id, code, false);
+        }).catch(function (e) { ps.disabled = false; ps.textContent = 'Tell the shop I have paid'; er.textContent = String(e.message || '').indexOf('kb_busy') >= 0 ? 'Please wait a few seconds and try again.' : String(e.message || '').indexOf('kb_closed') >= 0 ? 'This order was cancelled.' : 'Could not send. Check your internet and try again.'; });
+      };
+      document.getElementById('more').onclick = function (e) { e.preventDefault(); clearTimeout(trackTimer); S.payOpen = false; if (history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug); draw(); };
       if (history.replaceState && !qs.get('api')) history.replaceState(null, '', '/o/' + slug + '?t=' + id + '-' + code);
-      if (['delivered', 'cancelled'].indexOf(t.status) < 0) trackTimer = setTimeout(function () { if (document.getElementById('more')) track(id, code, justPlaced); }, 15000);
+      if (['delivered', 'cancelled'].indexOf(t.status) < 0 || (payNow(pay) && t.status !== 'cancelled' && !t.paid && t.claimed)) trackTimer = setTimeout(function () { if (document.getElementById('more')) track(id, code, justPlaced); }, 15000);
     }).catch(function () { trackTimer = setTimeout(function () { track(id, code, justPlaced); }, 20000); });
   }
 })();
